@@ -3,6 +3,7 @@
 window.addEventListener('load', onLoad);
 let magicSwitch = false;
 let retrograde = false;
+let stopAuto = false;
 
 function onLoad() {
     displayImg();
@@ -10,13 +11,25 @@ function onLoad() {
     for (let arrow of arrows) {
         arrow.addEventListener('click', changePhoto);
     }
+    document.querySelector('.auto-toggle').addEventListener('click', () => {
+        if (stopAuto === false) {
+            stopAuto = true;
+            document.querySelector('.auto-toggle').textContent = 'Auto-scroll off';
+            return;
+        }
+        if (stopAuto === true) {
+            stopAuto = false;
+            document.querySelector('.auto-toggle').textContent = 'Auto-scroll on';
+            autoSlide();
+        }
+    });
 }
 
 function changePhoto(e) {
-    if (e.target.alt === 'arrow-right') {
+    if (e.target.classList.contains('right') || e.target.alt ===('arrow-right')) {
         magicSwitch = true;
         autoSlide();
-    } else if (e.target.alt === 'arrow-left') {
+    } else if (e.target.classList.contains('left') || e.target.alt ===('arrow-left')) {
         magicSwitch = true;
         retrograde = true;
         autoSlide();
@@ -60,21 +73,17 @@ function autoSlide() {
     }
 
     if (retrograde === true) {
+        nextImage = document.querySelector(`.image[data-index = '${imagePointer - 1}']`);
+        nextDot = document.querySelector(`.dot-container[data-index = '${dotIndex - 1}']`);
+
         if (imagePointer === 0) {
             nextImage = document.querySelector(`.image[data-index = '9']`);
-        } else {
-            nextImage = document.querySelector(`.image[data-index = '${imagePointer - 1}']`);
-        }
-        
+        } 
         if (dotIndex === 0) {
             nextDot = document.querySelector(".dot-container[data-index = '9']");
-        } else {
-            nextDot = document.querySelector(`.dot-container[data-index = '${dotIndex - 1}']`);
-        }
+        } 
         retrograde = false;
     }
-
-
 
     imageSelect.classList.remove('displayed');
     imageSelect.classList.add('hidden');
@@ -86,6 +95,10 @@ function autoSlide() {
 
     if (magicSwitch === true) {
         magicSwitch = false;
+        return;
+    }
+
+    if (stopAuto === true) {
         return;
     }
 
